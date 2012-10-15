@@ -7,6 +7,15 @@ A library class that handles role-based and privilege-based authorization.
 <b>Last Updated:</b> October 14, 2012
 
 
+## To Do List
+
+* Privilege negation for both user_privs and for role_privs.
+
+* A skeleton manager system that can be dropped into a project and customized for an admin user-role-privilege management system.
+
+* Change all of the table names to remove underbars and replace them with first-letter capitalized camelcase.
+
+
 ## License 
 
 The MIT License
