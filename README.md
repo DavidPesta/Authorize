@@ -4,7 +4,12 @@ Authorize
 A library class that handles role-based and privilege-based authorization.
 
 <b>Initial Release:</b> October 14, 2012<br>
-<b>Last Updated:</b> October 14, 2012
+<b>Last Updated:</b> January 16, 2013
+
+
+## Best Practices
+
+* As a convention, privilege names should be PascalCase.
 
 
 ## To Do List
@@ -20,7 +25,7 @@ A library class that handles role-based and privilege-based authorization.
 
 The MIT License
 
-Copyright (c) 2012 David Pesta
+Copyright (c) 2012-2013 David Pesta
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

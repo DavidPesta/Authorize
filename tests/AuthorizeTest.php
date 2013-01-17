@@ -1,7 +1,7 @@
 <?php
 
 /*
-* Copyright (c) 2012 David Pesta, https://github.com/DavidPesta/Authorize
+* Copyright (c) 2012-2013 David Pesta, https://github.com/DavidPesta/Authorize
 * This file is licensed under the MIT License.
 * You should have received a copy of the MIT License along with this program.
 * If not, see http://www.opensource.org/licenses/mit-license.php
@@ -25,10 +25,10 @@ class AuthorizeTest extends UnitTestCase {
 		
 		// An appropriate place to define these is generally where Authorize is instantiated to create the object, like a bootstrap or a small include
 		$privs = [
-			1 => "1st Admin Priv",
-			2 => "2nd Admin Priv",
-			3 => "1st Member Priv",
-			4 => "2nd Member Priv"
+			1 => "FirstAdminPriv",
+			2 => "SecondAdminPriv",
+			3 => "FirstMemberPriv",
+			4 => "SecondMemberPriv"
 		];
 		
 		$this->authorize = new Authorize( $this->dbh, $privs );
@@ -43,14 +43,14 @@ class AuthorizeTest extends UnitTestCase {
 		$this->authorize->addUserRole( "David", "Member" );
 		$this->authorize->addUserRole( "Mike", "Member" );
 		
-		$this->authorize->addRolePriv( "Admin", "1st Admin Priv" );
-		$this->authorize->addRolePriv( "Admin", "2nd Admin Priv" );
-		$this->authorize->addRolePriv( "Member", "1st Member Priv" );
-		$this->authorize->addRolePriv( "Member", "2nd Member Priv" );
+		$this->authorize->addRolePriv( "Admin", "FirstAdminPriv" );
+		$this->authorize->addRolePriv( "Admin", "SecondAdminPriv" );
+		$this->authorize->addRolePriv( "Member", "FirstMemberPriv" );
+		$this->authorize->addRolePriv( "Member", "SecondMemberPriv" );
 
-		$this->authorize->addUserPriv( "Mike", "1st Admin Priv" );
-		$this->authorize->addUserPriv( "Rick", "2nd Admin Priv" );
-		$this->authorize->addUserPriv( "David", "2nd Admin Priv" ); // This shows that redundancy of adding user privs when they already have role privs isn't a problem
+		$this->authorize->addUserPriv( "Mike", "FirstAdminPriv" );
+		$this->authorize->addUserPriv( "Rick", "SecondAdminPriv" );
+		$this->authorize->addUserPriv( "David", "SecondAdminPriv" ); // This shows that redundancy of adding user privs when they already have role privs isn't a problem
 	}
 	
 	function testConstructorRequiresDatabaseHandler() {
@@ -76,20 +76,20 @@ class AuthorizeTest extends UnitTestCase {
 	}
 	
 	function testPriv() {
-		$this->AssertTrue( $this->authorize->priv( '1st Admin Priv', "David" ) );
-		$this->AssertTrue( $this->authorize->priv( '2nd Admin Priv', "David" ) );
-		$this->AssertTrue( $this->authorize->priv( '1st Member Priv', "David" ) );
-		$this->AssertTrue( $this->authorize->priv( '2nd Member Priv', "David" ) );
+		$this->AssertTrue( $this->authorize->priv( 'FirstAdminPriv', "David" ) );
+		$this->AssertTrue( $this->authorize->priv( 'SecondAdminPriv', "David" ) );
+		$this->AssertTrue( $this->authorize->priv( 'FirstMemberPriv', "David" ) );
+		$this->AssertTrue( $this->authorize->priv( 'SecondMemberPriv', "David" ) );
 		
-		$this->AssertTrue( $this->authorize->priv( '1st Admin Priv', "Mike" ) );
-		$this->AssertFalse( $this->authorize->priv( '2nd Admin Priv', "Mike" ) );
-		$this->AssertTrue( $this->authorize->priv( '1st Member Priv', "Mike" ) );
-		$this->AssertTrue( $this->authorize->priv( '2nd Member Priv', "Mike" ) );
+		$this->AssertTrue( $this->authorize->priv( 'FirstAdminPriv', "Mike" ) );
+		$this->AssertFalse( $this->authorize->priv( 'SecondAdminPriv', "Mike" ) );
+		$this->AssertTrue( $this->authorize->priv( 'FirstMemberPriv', "Mike" ) );
+		$this->AssertTrue( $this->authorize->priv( 'SecondMemberPriv', "Mike" ) );
 		
-		$this->AssertFalse( $this->authorize->priv( '1st Admin Priv', "Rick" ) );
-		$this->AssertTrue( $this->authorize->priv( '2nd Admin Priv', "Rick" ) );
-		$this->AssertFalse( $this->authorize->priv( '1st Member Priv', "Rick" ) );
-		$this->AssertFalse( $this->authorize->priv( '2nd Member Priv', "Rick" ) );
+		$this->AssertFalse( $this->authorize->priv( 'FirstAdminPriv', "Rick" ) );
+		$this->AssertTrue( $this->authorize->priv( 'SecondAdminPriv', "Rick" ) );
+		$this->AssertFalse( $this->authorize->priv( 'FirstMemberPriv', "Rick" ) );
+		$this->AssertFalse( $this->authorize->priv( 'SecondMemberPriv', "Rick" ) );
 	}
 	
 	function testRole() {
@@ -123,20 +123,20 @@ class AuthorizeTest extends UnitTestCase {
 	
 	function testRemoveRolePriv() {
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Admin" );
-		$this->AssertTrue( in_array( "1st Admin Priv", $rolePrivs ) );
+		$this->AssertTrue( in_array( "FirstAdminPriv", $rolePrivs ) );
 		
-		$this->authorize->removeRolePriv( "Admin", "1st Admin Priv" );
+		$this->authorize->removeRolePriv( "Admin", "FirstAdminPriv" );
 		
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Admin" );
-		$this->AssertFalse( in_array( "1st Admin Priv", $rolePrivs ) );
+		$this->AssertFalse( in_array( "FirstAdminPriv", $rolePrivs ) );
 	}
 	
 	function testRemoveUserPriv() {
-		$this->AssertTrue( $this->authorize->priv( "2nd Admin Priv", "Rick" ) );
+		$this->AssertTrue( $this->authorize->priv( "SecondAdminPriv", "Rick" ) );
 		
-		$this->authorize->removeUserPriv( "Rick", "2nd Admin Priv" );
+		$this->authorize->removeUserPriv( "Rick", "SecondAdminPriv" );
 		
-		$this->AssertFalse( $this->authorize->priv( "2nd Admin Priv", "Rick" ) );
+		$this->AssertFalse( $this->authorize->priv( "SecondAdminPriv", "Rick" ) );
 	}
 	
 	function testFetchUserIdAndFetchUsername() {
@@ -152,9 +152,9 @@ class AuthorizeTest extends UnitTestCase {
 	}
 	
 	function testFetchPrivIdAndFetchPriv() {
-		$privId = $this->authorize->fetchPrivId( "2nd Admin Priv" );
+		$privId = $this->authorize->fetchPrivId( "SecondAdminPriv" );
 		$priv = $this->authorize->fetchPriv( $privId );
-		$this->assertEqual( "2nd Admin Priv", $priv );
+		$this->assertEqual( "SecondAdminPriv", $priv );
 	}
 	
 	function testFetchRoles() {
@@ -169,10 +169,10 @@ class AuthorizeTest extends UnitTestCase {
 	function testFetchPrivs() {
 		$privs = $this->authorize->fetchPrivs();
 		$testPrivs = [
-			1 => "1st Admin Priv",
-			2 => "2nd Admin Priv",
-			3 => "1st Member Priv",
-			4 => "2nd Member Priv"
+			1 => "FirstAdminPriv",
+			2 => "SecondAdminPriv",
+			3 => "FirstMemberPriv",
+			4 => "SecondMemberPriv"
 		];
 		$this->assertEqual( $testPrivs, $privs );
 	}
@@ -189,9 +189,9 @@ class AuthorizeTest extends UnitTestCase {
 	function testFetchUserPrivs() {
 		$userPrivs = $this->authorize->fetchUserPrivs( "Mike" );
 		$testUserPrivs = [
-			3 => "1st Member Priv",
-    		4 => "2nd Member Priv",
-    		1 => "1st Admin Priv"
+			3 => "FirstMemberPriv",
+    		4 => "SecondMemberPriv",
+    		1 => "FirstAdminPriv"
 		];
 		$this->assertEqual( $testUserPrivs, $userPrivs );
 	}
@@ -199,15 +199,15 @@ class AuthorizeTest extends UnitTestCase {
 	function testFetchRolePrivs() {
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Admin" );
 		$testRolePrivs = [
-			1 => "1st Admin Priv",
-    		2 => "2nd Admin Priv"
+			1 => "FirstAdminPriv",
+    		2 => "SecondAdminPriv"
 		];
 		$this->assertEqual( $testRolePrivs, $rolePrivs );
 		
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Member" );
 		$testRolePrivs = [
-			3 => "1st Member Priv",
-    		4 => "2nd Member Priv"
+			3 => "FirstMemberPriv",
+    		4 => "SecondMemberPriv"
 		];
 		$this->assertEqual( $testRolePrivs, $rolePrivs );
 	}
@@ -228,21 +228,21 @@ class AuthorizeTest extends UnitTestCase {
 	}
 	
 	function testFetchPrivUsers() {
-		$privUsers = $this->authorize->fetchPrivUsers( "2nd Admin Priv" );
+		$privUsers = $this->authorize->fetchPrivUsers( "SecondAdminPriv" );
 		$testPrivUsers = [
 			1 => "David",
     		3 => "Rick"
 		];
 		$this->assertEqual( $testPrivUsers, $privUsers );
 		
-		$privUsers = $this->authorize->fetchPrivUsers( "1st Admin Priv" );
+		$privUsers = $this->authorize->fetchPrivUsers( "FirstAdminPriv" );
 		$testPrivUsers = [
 			1 => "David",
     		2 => "Mike"
 		];
 		$this->assertEqual( $testPrivUsers, $privUsers );
 		
-		$privUsers = $this->authorize->fetchPrivUsers( "1st Member Priv" );
+		$privUsers = $this->authorize->fetchPrivUsers( "FirstMemberPriv" );
 		$testPrivUsers = [
 			1 => "David",
     		2 => "Mike"
@@ -251,21 +251,21 @@ class AuthorizeTest extends UnitTestCase {
 	}
 	
 	function testFetchPrivRoles() {
-		$privRoles = $this->authorize->fetchPrivRoles( "1st Admin Priv" );
+		$privRoles = $this->authorize->fetchPrivRoles( "FirstAdminPriv" );
 		$testPrivRoles = [
 			1 => "Admin"
 		];
 		$this->assertEqual( $testPrivRoles, $privRoles );
 		
-		$privRoles = $this->authorize->fetchPrivRoles( "2nd Member Priv" );
+		$privRoles = $this->authorize->fetchPrivRoles( "SecondMemberPriv" );
 		$testPrivRoles = [
 			2 => "Member"
 		];
 		$this->assertEqual( $testPrivRoles, $privRoles );
 		
-		$this->authorize->addRolePriv( "Member", "1st Admin Priv" );
+		$this->authorize->addRolePriv( "Member", "FirstAdminPriv" );
 		
-		$privRoles = $this->authorize->fetchPrivRoles( "1st Admin Priv" );
+		$privRoles = $this->authorize->fetchPrivRoles( "FirstAdminPriv" );
 		$testPrivRoles = [
 			1 => "Admin",
     		2 => "Member"
@@ -275,54 +275,54 @@ class AuthorizeTest extends UnitTestCase {
 	
 	function testOverlappingRolePrivs() {
 		$privs = [
-			1 => "1st Admin Priv",
-			2 => "2nd Admin Priv",
-			3 => "1st Member Priv",
-			4 => "2nd Member Priv",
-			5 => "Overlapping Priv"
+			1 => "FirstAdminPriv",
+			2 => "SecondAdminPriv",
+			3 => "FirstMemberPriv",
+			4 => "SecondMemberPriv",
+			5 => "OverlappingPriv"
 		];
 		
 		$this->authorize = new Authorize( $this->dbh, $privs );
 
-		$this->authorize->addRolePriv( "Admin", "Overlapping Priv" );
-		$this->authorize->addRolePriv( "Member", "Overlapping Priv" );
+		$this->authorize->addRolePriv( "Admin", "OverlappingPriv" );
+		$this->authorize->addRolePriv( "Member", "OverlappingPriv" );
 		
-		$this->AssertTrue( $this->authorize->priv( 'Overlapping Priv', "David" ) );
+		$this->AssertTrue( $this->authorize->priv( 'OverlappingPriv', "David" ) );
 		
 		$userPrivs = $this->authorize->fetchUserPrivs( "David" );
 		$testUserPrivs = [
-			1 => "1st Admin Priv",
-			2 => "2nd Admin Priv",
-			3 => "1st Member Priv",
-			4 => "2nd Member Priv",
-			5 => "Overlapping Priv"
+			1 => "FirstAdminPriv",
+			2 => "SecondAdminPriv",
+			3 => "FirstMemberPriv",
+			4 => "SecondMemberPriv",
+			5 => "OverlappingPriv"
 		];
 		$this->assertEqual( $testUserPrivs, $userPrivs );
 		
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Admin" );
 		$testRolePrivs = [
-			1 => "1st Admin Priv",
-    		2 => "2nd Admin Priv",
-    		5 => "Overlapping Priv"
+			1 => "FirstAdminPriv",
+    		2 => "SecondAdminPriv",
+    		5 => "OverlappingPriv"
 		];
 		$this->assertEqual( $testRolePrivs, $rolePrivs );
 		
 		$rolePrivs = $this->authorize->fetchRolePrivs( "Member" );
 		$testRolePrivs = [
-			3 => "1st Member Priv",
-    		4 => "2nd Member Priv",
-    		5 => "Overlapping Priv"
+			3 => "FirstMemberPriv",
+    		4 => "SecondMemberPriv",
+    		5 => "OverlappingPriv"
 		];
 		$this->assertEqual( $testRolePrivs, $rolePrivs );
 		
-		$privUsers = $this->authorize->fetchPrivUsers( "Overlapping Priv" );
+		$privUsers = $this->authorize->fetchPrivUsers( "OverlappingPriv" );
 		$testPrivUsers = [
 			1 => "David",
     		2 => "Mike"
 		];
 		$this->assertEqual( $testPrivUsers, $privUsers );
 		
-		$privRoles = $this->authorize->fetchPrivRoles( "Overlapping Priv" );
+		$privRoles = $this->authorize->fetchPrivRoles( "OverlappingPriv" );
 		$testPrivRoles = [
 			1 => "Admin",
     		2 => "Member"
